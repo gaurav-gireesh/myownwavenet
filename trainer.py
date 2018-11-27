@@ -55,24 +55,12 @@ class Train(object):
 
         # g = data_generation(data,fs,mu=self.mu, seq_size=self.seq_size,ctx=self.ctx)
         wds = WavenetDataset('parametric-2.wav', seq_size=self.seq_size, mu=self.mu, ctx = self.ctx)
-        train_data = DataLoader(wds, batch_size=1, shuffle=False)
+        train_data = gluon.data.DataLoader(wds, batch_size=5, shuffle=False)
         
         loss_save = []
         best_loss = sys.maxsize
         for epoch in trange(self.epoches):
             loss = 0.0
-            # ORIGINAL CODE START
-            
-            # for _ in range(self.batch_size):
-                
-            #     batch = next(g)
-            #     x = batch[:-1]
-            #     with autograd.record():
-            #         logits = self.net(x)
-            #         sz = logits.shape[0]
-            #         loss = loss + self.loss_fn(logits, batch[-sz:])
-            #     loss.backward()
-            #     self.trainer.step(1,ignore_stale_grad=True)
             for  _ in range(self.batch_size):
                 # print(batch)
                 for data in train_data:
@@ -91,13 +79,6 @@ class Train(object):
                 
             loss_save.append(nd.sum(loss).asscalar()/self.batch_size)
 
-
-            #ORIGINAL CODE END
-
-            #Replacement with Dataloader begins...-------
-
-
-            #Replacement with Dataloader ends----------
         
             #save the best model
             current_loss = nd.sum(loss).asscalar()/self.batch_size
